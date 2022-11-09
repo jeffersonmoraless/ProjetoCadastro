@@ -11,16 +11,56 @@ class UserController{
     
 onSubmit(){
     
-    let _this = this; // tratamento para usar this dentro da função 
-    this.formEl.addEventListener("submit",function(event){
+    //let _this = this; // tratamento para usar this dentro da função 
+    this.formEl.addEventListener("submit",event =>{
     
         event.preventDefault();
         
-        _this.addLine(_this.getValues());
-        
-    }); 
-}//fechando metodo OnSubmit
+        let values = this.getValues();
 
+        
+
+        this.getPhoto().then(
+        
+            (content)=>{
+                values.photo = content;
+                this.addLine(values);
+            },
+            (error)=>{
+                console.error(error);
+            }
+            );     
+    }); 
+}//fechando metodo onSubmit
+
+
+getPhoto(){
+
+    return new Promise((resolve, reject)=>{
+        let fileReader = new FileReader();
+
+    let elements = [...this.formEl.elements].filter(item =>{
+
+        if(item.name === 'photo' ){
+            return item;
+        }
+
+    });
+   
+    let file = elements[0].files[0];
+    
+   fileReader.onload = ()=>{
+
+        resolve(fileReader.result);
+
+    };
+    fileReader.onerror = (e)=>{
+        reject(e);
+    };
+    fileReader.readAsDataURL(file);
+    });
+
+}//fechando metodo get photo
 
 getValues(){
         
@@ -41,11 +81,10 @@ getValues(){
 
 addLine(dataUser){
 
-    console.log(dataUser);
-
+    
     this.tableEl.innerHTML = `  
         <tr>
-            <td><img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm"></td>
+            <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
             <td>${dataUser.name}</td>
             <td>${dataUser.email}</td>
             <td>${dataUser.admin}</td>
