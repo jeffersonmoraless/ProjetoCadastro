@@ -9,6 +9,13 @@ class User{
         this.password = password;
         this.photo = photo;
         this.admin = admin;
+        this._registro;
+    }
+    get registro(){
+        return new Date();
+    }
+    set registro(valor){
+        this._registro = valor;
     }
 
 }
